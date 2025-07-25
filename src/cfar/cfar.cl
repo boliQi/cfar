@@ -1,13 +1,13 @@
-__kernel void cfar_ca(__global const float *pwr,
-					  __global unsigned int *mask,
-					  __global float *yuzhi,
-					  const float K,
-					  const unsigned int guard,
-					  const unsigned int train,
-					  const unsigned int len)
-// 新增debug数组参数
-__global float *debug_ibuf,
-__global float *debug_pwr,
+__kernel void cfar_ca(
+	__global const float *pwr,
+	__global unsigned int *mask,
+	__global float *yuzhi,
+	__global float *debug_ibuf,
+	__global float *debug_pwr,
+	const float K,
+	const unsigned int guard,
+	const unsigned int train,
+	const unsigned int len)
 {
 	int gid = get_global_id(0);
 	int lid = get_local_id(0);

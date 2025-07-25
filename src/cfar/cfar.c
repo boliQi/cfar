@@ -173,13 +173,12 @@ void CA_CFAR(float *x,
 	clSetKernelArg(kernel, 0, sizeof(cl_mem), &d_pwr);
 	clSetKernelArg(kernel, 1, sizeof(cl_mem), &d_dec);
 	clSetKernelArg(kernel, 2, sizeof(cl_mem), &d_threshold);
-	clSetKernelArg(kernel, 3, sizeof(float), &K);
-	clSetKernelArg(kernel, 4, sizeof(unsigned int), &guard_len);
-	clSetKernelArg(kernel, 5, sizeof(unsigned int), &ref_len);
-	clSetKernelArg(kernel, 6, sizeof(unsigned int), &N);
-	// 新增debug参数
-	clSetKernelArg(kernel, 7, sizeof(cl_mem), &d_debug_ibuf);
-	clSetKernelArg(kernel, 8, sizeof(cl_mem), &d_debug_pwr);
+	clSetKernelArg(kernel, 3, sizeof(cl_mem), &d_debug_ibuf);
+	clSetKernelArg(kernel, 4, sizeof(cl_mem), &d_debug_pwr);
+	clSetKernelArg(kernel, 5, sizeof(float), &K);
+	clSetKernelArg(kernel, 6, sizeof(unsigned int), &guard_len);
+	clSetKernelArg(kernel, 7, sizeof(unsigned int), &ref_len);
+	clSetKernelArg(kernel, 8, sizeof(unsigned int), &N);
 
 	// ����NDRangeִ�м���
 	clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &gws, &lws, 0, NULL, NULL);
