@@ -42,8 +42,8 @@ __global float *debug_pwr,
 	}
 	barrier(CLK_LOCAL_MEM_FENCE);
 
-	// debug: 前16个float数据写入全局debug数组
-	for (int i = 0; i < 16; ++i) {
+	// debug: 前100个float数据写入全局debug数组
+	for (int i = 0; i < 100; ++i) {
 		int ibuf_idx = (i / 4) % 256;
 		int ibuf_off = i % 4;
 		if (lid == 0) {

@@ -33,6 +33,10 @@ void readData(float* data, const char* input_filename)
     rewind(fp);	//�ص��ļ���λ
     fread(data, sizeof(float), N, fp);
     fclose(fp);
+    // 输出前16个数据
+    printf("readData前16个float数据: ");
+    for(int i=0;i<16&&i<N;i++) printf("%f ", data[i]);
+    printf("\n");
 }
 
 void writeData(float* data, const char* input_filename, int data_size)

@@ -162,8 +162,8 @@ void CA_CFAR(float *x,
 	cl_mem d_dec = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(unsigned int) * N, NULL, &err);
 	cl_mem d_threshold = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(float) * N, NULL, &err);
 	// 新增debug缓冲区
-	cl_mem d_debug_ibuf = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(float) * 16, NULL, &err);
-	cl_mem d_debug_pwr = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(float) * 16, NULL, &err);
+	cl_mem d_debug_ibuf = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(float) * 100, NULL, &err);
+	cl_mem d_debug_pwr = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(float) * 100, NULL, &err);
 
 	clEnqueueWriteBuffer(queue, d_pwr, CL_TRUE, 0, sizeof(float) * N, x, 0, NULL, NULL);
 
@@ -188,14 +188,14 @@ void CA_CFAR(float *x,
 	clEnqueueReadBuffer(queue, d_dec, CL_TRUE, 0, sizeof(unsigned int) * N, dec, 0, NULL, NULL);
 	clEnqueueReadBuffer(queue, d_threshold, CL_TRUE, 0, sizeof(float) * N, threshold, 0, NULL, NULL);
 	// 读取debug数据
-	float debug_ibuf[16] = {0};
-	float debug_pwr[16] = {0};
-	clEnqueueReadBuffer(queue, d_debug_ibuf, CL_TRUE, 0, sizeof(float) * 16, debug_ibuf, 0, NULL, NULL);
-	clEnqueueReadBuffer(queue, d_debug_pwr, CL_TRUE, 0, sizeof(float) * 16, debug_pwr, 0, NULL, NULL);
+	float debug_ibuf[100] = {0};
+	float debug_pwr[100] = {0};
+	clEnqueueReadBuffer(queue, d_debug_ibuf, CL_TRUE, 0, sizeof(float) * 100, debug_ibuf, 0, NULL, NULL);
+	clEnqueueReadBuffer(queue, d_debug_pwr, CL_TRUE, 0, sizeof(float) * 100, debug_pwr, 0, NULL, NULL);
 	printf("debug_ibuf: ");
-	for(int i=0;i<16;i++) printf("%f ", debug_ibuf[i]);
+	for(int i=0;i<100;i++) printf("%f ", debug_ibuf[i]);
 	printf("\ndebug_pwr: ");
-	for(int i=0;i<16;i++) printf("%f ", debug_pwr[i]);
+	for(int i=0;i<100;i++) printf("%f ", debug_pwr[i]);
 	printf("\n");
 
 	// �����ڴ�
