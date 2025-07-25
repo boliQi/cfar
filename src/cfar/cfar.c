@@ -1,7 +1,7 @@
 /*
  * cfar_main_gpu.c
  *
- *  Created on: 2025Äê7ÔÂ14ÈÕ
+ *  Created on: 2025ï¿½ï¿½7ï¿½ï¿½14ï¿½ï¿½
  *      Author: zhangtianyi
  */
 #include <stdio.h>
@@ -22,28 +22,73 @@ cl_command_queue queue;
 cl_int err;
 cl_program program;
 cl_kernel kernel;
+#define PRINT_DEVICE_INFO 1
 
 /*
- * ³õÊ¼»¯OPENCL»·¾³
+ * ï¿½ï¿½Ê¼ï¿½ï¿½OPENCLï¿½ï¿½ï¿½ï¿½
  * */
 void initOpenCL()
 {
-    // »ñÈ¡Æ½Ì¨
+    // ï¿½ï¿½È¡Æ½Ì¨
     err = clGetPlatformIDs(1, &platform, NULL);
 
-    // »ñÈ¡Éè±¸
+    // ï¿½ï¿½È¡ï¿½è±¸
     err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
     if (err == CL_DEVICE_NOT_FOUND) {
         err = clGetDeviceIDs(platform, CL_DEVICE_TYPE_CPU, 1, &device, NULL);
     }
 
-    // ´´½¨ÉÏÏÂÎÄ
+    #if PRINT_DEVICE_INFO
+	//æŸ¥è¯¢è®¾å¤‡è¯¦ç»†ä¿¡æ¯
+	size_t cb;
+	clGetDeviceInfo(*device, CL_DEVICE_NAME, 0, NULL, &cb);
+	char* devname = (char *)malloc(cb);
+	clGetDeviceInfo(*device, CL_DEVICE_NAME, cb, devname, 0);
+	printf("Device:  %s\n", devname);
+	free(devname);
+	int nsize[2] = { 0,0 };
+	clGetDeviceInfo(*device, CL_DEVICE_LOCAL_MEM_SIZE, 0, NULL, &cb);
+	printf("CL_DEVICE_LOCAL_MEM_SIZE num = %d\n", cb / sizeof(int));
+	clGetDeviceInfo(*device, CL_DEVICE_LOCAL_MEM_SIZE, 2 * sizeof(int), nsize, 0);
+	printf("CL_DEVICE_LOCAL_MEM_SIZE nsize = {%d, %d}\n", nsize[0], nsize[1]);
+	cl_ulong local_mem_size = 0;
+	clGetDeviceInfo(*device, CL_DEVICE_LOCAL_MEM_SIZE, sizeof(cl_ulong), &local_mem_size, NULL);
+	printf("CL_DEVICE_LOCAL_MEM_SIZE = %llu bytes\n", local_mem_size);
+
+	clGetDeviceInfo(*device, CL_DEVICE_GLOBAL_MEM_SIZE, 0, NULL, &cb);
+	printf("CL_DEVICE_GLOBAL_MEM_SIZE num = %d\n", cb / sizeof(int));
+	clGetDeviceInfo(*device, CL_DEVICE_GLOBAL_MEM_SIZE, 2 * sizeof(int), nsize, 0);
+	printf("CL_DEVICE_GLOBAL_MEM_SIZE nsize = {%d, %d}\n", nsize[0], nsize[1]);
+
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, 0, NULL, &cb);
+	printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE num = %d\n", cb / sizeof(int));
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, 2 * sizeof(int), nsize, 0);
+	printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE nsize = {%d, %d}\n", nsize[0], nsize[1]);
+
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_COMPUTE_UNITS, 0, NULL, &cb);
+	printf("CL_DEVICE_MAX_COMPUTE_UNITS num = %d\n", cb / sizeof(int));
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_COMPUTE_UNITS, 2 * sizeof(int), nsize, 0);
+	printf("CL_DEVICE_MAX_COMPUTE_UNITS nsize = {%d, %d}\n", nsize[0], nsize[1]);
+
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_GROUP_SIZE, 0, NULL, &cb);
+	printf("CL_DEVICE_MAX_WORK_GROUP_SIZE num = %d\n", cb / sizeof(int));
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_GROUP_SIZE, 2 * sizeof(int), nsize, 0);
+	printf("CL_DEVICE_MAX_WORK_GROUP_SIZE nsize = {%d, %d}\n", nsize[0], nsize[1]);
+
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 0, NULL, &cb);
+	printf("CL_DEVICE_MAX_WORK_ITEM_SIZES num = %d\n", cb / sizeof(int));
+	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3 * sizeof(int), nsize, 0);
+	printf("CL_DEVICE_MAX_WORK_ITEM_SIZES nsize = {%d, %d, %d}\n", nsize[0], nsize[1], nsize[2]);
+	printf("\n");
+#endif
+
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     context = clCreateContext(NULL, 1, &device, NULL, NULL, &err);
 
-    // ´´½¨ÃüÁî¶ÓÁĞ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     queue = clCreateCommandQueue(context, device, 0, &err);
 
-    // »ñÈ¡Éè±¸ĞÅÏ¢
+    // ï¿½ï¿½È¡ï¿½è±¸ï¿½ï¿½Ï¢
     char device_name[128];
     clGetDeviceInfo(device, CL_DEVICE_NAME, sizeof(device_name), device_name, NULL);
 
@@ -73,12 +118,12 @@ void initOpenCL()
     }
     free(filestr);
 
-    // ´´½¨ÄÚºË
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½
     kernel = clCreateKernel(program, "cfar_ca", &err);
 }
 
 /*
- * ÇåÀí»·¾³£¬ÊÍ·ÅÄÚ´æ¿Õ¼ä
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½Ú´ï¿½Õ¼ï¿½
  * */
 void cleanup()
 {
@@ -92,14 +137,14 @@ void cleanup()
 
 /*
   CA_CFAR.c
-  ²ÎÊıËµÃ÷£º
-  float *x ÊäÈëĞòÁĞ
-  unsigned int N ĞòÁĞ³¤¶È
-  unsigned int  guard_len µ¥²à±£»¤µ¥Ôª³¤¶È
-  unsigned int ref_len µ¥²à²Î¿¼µ¥Ôª³¤¶È
-  float pfa Ğé¾¯ÂÊ
-  unsigned int *dec ¼ì²â½á¹ûĞòÁĞ
-  float *threshold ¼ì²âãĞÖµĞòÁĞ
+  ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½
+  float *x ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  unsigned int N ï¿½ï¿½ï¿½Ğ³ï¿½ï¿½ï¿½
+  unsigned int  guard_len ï¿½ï¿½ï¿½à±£ï¿½ï¿½ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½
+  unsigned int ref_len ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½
+  float pfa ï¿½é¾¯ï¿½ï¿½
+  unsigned int *dec ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  float *threshold ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
  */
 void CA_CFAR(float *x,
 			 unsigned int N,
@@ -109,18 +154,18 @@ void CA_CFAR(float *x,
 			 unsigned int *dec, 
 			 float *threshold)
 {
-	//´´½¨³ÌĞòºÍÄÚºË
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½
 	const size_t lws = 128;
 	const size_t gws = ((N + lws - 1) / lws) * lws;
-	// ´´½¨»º³åÇø
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	cl_mem d_pwr = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(float) * N, NULL, &err);
 	cl_mem d_dec = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(unsigned int) * N, NULL, &err);
 	cl_mem d_threshold = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(float) * N, NULL, &err);
 
 	clEnqueueWriteBuffer(queue, d_pwr, CL_TRUE, 0, sizeof(float) * N, x, 0, NULL, NULL);
 
-	// ÉèÖÃKernel²ÎÊı
-	float K = sqrt(-log(pfa)); // ¼ÆËãµ÷½ÚÒò×Ó
+	// ï¿½ï¿½ï¿½ï¿½Kernelï¿½ï¿½ï¿½ï¿½
+	float K = sqrt(-log(pfa)); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	clSetKernelArg(kernel, 0, sizeof(cl_mem), &d_pwr);
 	clSetKernelArg(kernel, 1, sizeof(cl_mem), &d_dec);
@@ -130,14 +175,14 @@ void CA_CFAR(float *x,
 	clSetKernelArg(kernel, 5, sizeof(unsigned int), &ref_len);
 	clSetKernelArg(kernel, 6, sizeof(unsigned int), &N);
 
-	// µ÷¶ÈNDRangeÖ´ĞĞ¼ÆËã
+	// ï¿½ï¿½ï¿½ï¿½NDRangeÖ´ï¿½Ğ¼ï¿½ï¿½ï¿½
 	clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &gws, &lws, 0, NULL, NULL);
 
-	// ¶ÁÈ¡½á¹û
+	// ï¿½ï¿½È¡ï¿½ï¿½ï¿½
 	clEnqueueReadBuffer(queue, d_dec, CL_TRUE, 0, sizeof(unsigned int) * N, dec, 0, NULL, NULL);
 	clEnqueueReadBuffer(queue, d_threshold, CL_TRUE, 0, sizeof(float) * N, threshold, 0, NULL, NULL);
 
-	// ÇåÀíÄÚ´æ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½
 	clReleaseMemObject(d_pwr);
 	clReleaseMemObject(d_dec);
 	clReleaseMemObject(d_threshold);
