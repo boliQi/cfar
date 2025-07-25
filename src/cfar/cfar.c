@@ -22,7 +22,7 @@ cl_command_queue queue;
 cl_int err;
 cl_program program;
 cl_kernel kernel;
-#define PRINT_DEVICE_INFO 1
+#define PRINT_DEVICE_INFO 0
 
 /*
  * ��ʼ��OPENCL����
