@@ -158,6 +158,7 @@ void CA_CFAR(float *x,
 	const size_t lws = 256;
 	const size_t gws = ((N + lws - 1) / lws) * lws;
 	// ����������
+    //TODO：尝试将creatbuffer放到main.c
 	cl_mem d_pwr = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(float) * N, NULL, &err);
 	cl_mem d_dec = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(unsigned int) * N, NULL, &err);
 	cl_mem d_threshold = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(float) * N, NULL, &err);

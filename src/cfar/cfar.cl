@@ -46,7 +46,7 @@ __kernel void cfar_ca(
 	for (int i = 0; i < 100; ++i) {
 		int ibuf_idx = (i / 4) % 256;
 		int ibuf_off = i % 4;
-		if (lid == 0) {
+		if (gid == 0) {
 			debug_ibuf[i] = Ibuf[ibuf_idx].s[ibuf_off];
 			debug_pwr[i] = pwr[i];
 		}
@@ -56,7 +56,7 @@ __kernel void cfar_ca(
 	float sum_left = 0.0f;
 	float sum_right = 0.0f;
 	// 使用Ibuf中的数据进行平均值计算
-	for(int k = 1 ; k <= train ; ++k)
+	/*for(int k = 1 ; k <= train ; ++k)
 	{
 		int pos_left = gid - guard - k;
 		int pos_right = gid + guard + k;
@@ -72,6 +72,20 @@ __kernel void cfar_ca(
 	int ibuf_off_gid = gid % 4;
 	float cut_pwr = Ibuf[ibuf_idx_gid].s[ibuf_off_gid];
 	float noise_level = (sum_left + sum_right) / (2.0f * train);
+*/
+
+	//不使用IBUF计算
+	float sum_left = 0.0f;
+	float sum_right = 0.0f;
+	for(int k = 1 ; k <= train ; ++k)
+	{
+		int pos_left = gid - guard - k;
+		int pos_right = gid + guard + k;
+		sum_left += pwr[pos_left];
+		sum_right += pwr[pos_right];
+	}
+	float noise_level = (sum_left + sum_right) / (2.0f * train);
+	float cut_pwr = pwr[gid];
 
 	mask[gid] = (cut_pwr > K * noise_level) ? 1 : 0;
 	yuzhi[gid] = K * noise_level;
