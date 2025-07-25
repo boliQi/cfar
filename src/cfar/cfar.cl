@@ -42,15 +42,23 @@ __kernel void cfar_ca(__global const float *pwr,
 
 	float sum_left = 0.0f;
 	float sum_right = 0.0f;
+	// 使用Ibuf中的数据进行平均值计算
 	for(int k = 1 ; k <= train ; ++k)
 	{
 		int pos_left = gid - guard - k;
 		int pos_right = gid + guard + k;
-		sum_left += pwr[pos_left];
-		sum_right += pwr[pos_right];
+		// Ibuf下标 = (pos / 4) % 256，分组内偏移 = pos % 4
+		int ibuf_idx_left = (pos_left / 4) % 256;
+		int ibuf_off_left = pos_left % 4;
+		int ibuf_idx_right = (pos_right / 4) % 256;
+		int ibuf_off_right = pos_right % 4;
+		sum_left += Ibuf[ibuf_idx_left].s[ibuf_off_left];
+		sum_right += Ibuf[ibuf_idx_right].s[ibuf_off_right];
 	}
+	int ibuf_idx_gid = (gid / 4) % 256;
+	int ibuf_off_gid = gid % 4;
+	float cut_pwr = Ibuf[ibuf_idx_gid].s[ibuf_off_gid];
 	float noise_level = (sum_left + sum_right) / (2.0f * train);
-	float cut_pwr = pwr[gid];
 
 	mask[gid] = (cut_pwr > K * noise_level) ? 1 : 0;
 	yuzhi[gid] = K * noise_level;
