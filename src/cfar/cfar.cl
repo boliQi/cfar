@@ -5,6 +5,9 @@ __kernel void cfar_ca(__global const float *pwr,
 					  const unsigned int guard,
 					  const unsigned int train,
 					  const unsigned int len)
+// 新增debug数组参数
+__global float *debug_ibuf,
+__global float *debug_pwr,
 {
 	int gid = get_global_id(0);
 	int lid = get_local_id(0);
@@ -38,6 +41,16 @@ __kernel void cfar_ca(__global const float *pwr,
 		}
 	}
 	barrier(CLK_LOCAL_MEM_FENCE);
+
+	// debug: 前16个float数据写入全局debug数组
+	for (int i = 0; i < 16; ++i) {
+		int ibuf_idx = (i / 4) % 256;
+		int ibuf_off = i % 4;
+		if (lid == 0) {
+			debug_ibuf[i] = Ibuf[ibuf_idx].s[ibuf_off];
+			debug_pwr[i] = pwr[i];
+		}
+	}
 
 
 	float sum_left = 0.0f;
