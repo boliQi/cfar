@@ -22,7 +22,7 @@ __kernel void cfar_ca(__global const float *pwr,
 	int base = get_group_id(0) * Isize;
 	int idx = base + lid;
 
-	for(int i = 0 ; i < (Isize + 3) / 4 ; i++)
+/*	for(int i = 0 ; i < (Isize + 3) / 4 ; i++)
 	{
 		int off = base + i * 4;
 		if(off + 3 < len)
@@ -31,6 +31,7 @@ __kernel void cfar_ca(__global const float *pwr,
 		}
 	}
 	barrier(CLK_LOCAL_MEM_FENCE);
+*/
 
 	float sum_left = 0.0f;
 	float sum_right = 0.0f;

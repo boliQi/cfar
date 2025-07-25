@@ -43,7 +43,7 @@ void initOpenCL()
 	size_t cb;
 	clGetDeviceInfo(device, CL_DEVICE_NAME, 0, NULL, &cb);
 	char* devname = (char *)malloc(cb);
-	clGetDeviceInfo(*device, CL_DEVICE_NAME, cb, devname, 0);
+	clGetDeviceInfo(device, CL_DEVICE_NAME, cb, devname, 0);
 	printf("Device:  %s\n", devname);
 	free(devname);
 	int nsize[2] = { 0,0 };

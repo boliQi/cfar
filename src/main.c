@@ -1,7 +1,7 @@
 /*
  * cfar_main.c
  *
- *  Created on: 2025Äê6ÔÂ24ÈÕ
+ *  Created on: 2025ï¿½ï¿½6ï¿½ï¿½24ï¿½ï¿½
  *      Author: wuying
  */
 #include <stdio.h>
@@ -14,9 +14,9 @@
 #include <unistd.h>
 #include <cfar.h>
 
-#define MAX_SIZE 1024*1024	//×î´óÊäÈëÊý¾Ý³¤¶È
-#define TIMES 	1000   // Ëã×ÓÖ´ÐÐ´ÎÊý
-unsigned int N; 		//ÐÅºÅ³¤¶È,Í¨¹ý¶ÁÈ¡ÎÄ¼þÈ·¶¨Êý×é³¤¶È
+#define MAX_SIZE 1024*1024	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
+#define TIMES 	10   // ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð´ï¿½ï¿½ï¿½
+unsigned int N; 		//ï¿½ÅºÅ³ï¿½ï¿½ï¿½,Í¨ï¿½ï¿½ï¿½ï¿½È¡ï¿½Ä¼ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½é³¤ï¿½ï¿½
 
 void readData(float* data, const char* input_filename)
 {
@@ -26,11 +26,11 @@ void readData(float* data, const char* input_filename)
         exit(EXIT_FAILURE);
     }
 
-	//»ñÈ¡ÎÄ¼þÊý×é´óÐ¡
+	//ï¿½ï¿½È¡ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
 	fseek(fp, 0 , SEEK_END);
 	N = ftell(fp) / sizeof(float);
 
-	rewind(fp);	//»Øµ½ÎÄ¼þÊ×Î»
+	rewind(fp);	//ï¿½Øµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Î»
     fread(data, sizeof(float), N, fp);
     fclose(fp);
 }
@@ -49,29 +49,29 @@ void writeData(float* data, const char* input_filename, int data_size)
 
 int main(int argc, char** argv)
 {
-	unsigned int train = 32; 	//²Î¿¼´°°ë³¤
-	unsigned int guard = 4; 	    //±£»¤´°°ë³¤
-	float pfa = 0.0001; 	//Ä¿±êÐé¾¯ÂÊ
-	float *inputdata;	    //ÊäÈëÊý¾Ý
-	unsigned int *dec;      //Êä³öÅÐ¶ÏÐòÁÐ
-	float *threshold;	    //Êä³öãÐÖµÐòÁÐ
-	const size_t lws = 128; //Ã¿¸ö¹¤×÷×éµÄ±¾µØ¹¤×÷ÏîÊýÁ¿
+	unsigned int train = 32; 	//ï¿½Î¿ï¿½ï¿½ï¿½ï¿½ë³¤
+	unsigned int guard = 4; 	    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë³¤
+	float pfa = 0.0001; 	//Ä¿ï¿½ï¿½ï¿½é¾¯ï¿½ï¿½
+	float *inputdata;	    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	unsigned int *dec;      //ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½
+	float *threshold;	    //ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
+	const size_t lws = 128; //Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	inputdata = (float *)malloc(MAX_SIZE * sizeof(float));	//ÎªÊäÈëÊý¾Ý·ÖÅä¿Õ¼ä
-	//¶ÁÈ¡ÊäÈëÊý¾Ý
+	inputdata = (float *)malloc(MAX_SIZE * sizeof(float));	//Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½Õ¼ï¿½
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	readData(inputdata, "../data/cfar_data.bin");
 
-	//·ÖÅä¿Õ¼ä
+	//ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½
 	dec = (unsigned int *)malloc(N * sizeof(unsigned int));
 	threshold = (float *)malloc(N * sizeof(float));
 
-	//³õÊ¼»¯OPENCL»·¾³
+	//ï¿½ï¿½Ê¼ï¿½ï¿½OPENCLï¿½ï¿½ï¿½ï¿½
 	initOpenCL();
 
-    //1¡¢ÕýÈ·ÐÔÐ£Ñé
+    //1ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½Ð£ï¿½ï¿½
     CA_CFAR(inputdata, N, guard, train, pfa, dec, threshold);
 
-	//½«½á¹ûÐ´ÈëÎÄ¼þÖÐ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
 	writeData(dec, "../data/dec_actual.bin", N);
 	writeData(threshold, "../data/threshold_actual.bin", N);
 
@@ -93,7 +93,7 @@ int main(int argc, char** argv)
     	return;
     }
 
-    //2¡¢Í³¼ÆÐÔÄÜ¼°ÎÈ¶¨ÐÔ
+    //2ï¿½ï¿½Í³ï¿½ï¿½ï¿½ï¿½ï¿½Ü¼ï¿½ï¿½È¶ï¿½ï¿½ï¿½
     struct timeval tv1, tv2;
     double timeSpend[TIMES];
     double timeMax = 0.0;
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
     for(int i = 0; i < TIMES; i++)
     {
         gettimeofday(&tv1, NULL);
-        //  ÔËËã
+        //  ï¿½ï¿½ï¿½ï¿½
         CA_CFAR(inputdata, N, guard, train, pfa, dec, threshold);
         gettimeofday(&tv2, NULL);
         timeSpend[i] = time_used(tv1, tv2);
@@ -116,13 +116,13 @@ int main(int argc, char** argv)
     printf("Times=%d, timeMax=%fus, timeMin=%fus, timeAve=%fus\n", TIMES, timeMax, timeMin, timeAvg);
 
     float delta = 0.0;
-    delta = (timeMax - timeMin) / timeMin * 100;  //µ¥Î»£º%
+    delta = (timeMax - timeMin) / timeMin * 100;  //ï¿½ï¿½Î»ï¿½ï¿½%
     printf("\n===========================CFAR RESULT==========================================\n");
     printf("CFAR algorithm stability delta = %f%%, performance average time = %fus\n", delta, timeAvg);
 
 	free(inputdata);
 	free(dec);
 	free(threshold);
-	//ÇåÀí»·¾³
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	cleanup();
 }
