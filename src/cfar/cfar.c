@@ -41,43 +41,43 @@ void initOpenCL()
     #if PRINT_DEVICE_INFO
 	//查询设备详细信息
 	size_t cb;
-	clGetDeviceInfo(*device, CL_DEVICE_NAME, 0, NULL, &cb);
+	clGetDeviceInfo(device, CL_DEVICE_NAME, 0, NULL, &cb);
 	char* devname = (char *)malloc(cb);
 	clGetDeviceInfo(*device, CL_DEVICE_NAME, cb, devname, 0);
 	printf("Device:  %s\n", devname);
 	free(devname);
 	int nsize[2] = { 0,0 };
-	clGetDeviceInfo(*device, CL_DEVICE_LOCAL_MEM_SIZE, 0, NULL, &cb);
+	clGetDeviceInfo(device, CL_DEVICE_LOCAL_MEM_SIZE, 0, NULL, &cb);
 	printf("CL_DEVICE_LOCAL_MEM_SIZE num = %d\n", cb / sizeof(int));
-	clGetDeviceInfo(*device, CL_DEVICE_LOCAL_MEM_SIZE, 2 * sizeof(int), nsize, 0);
+	clGetDeviceInfo(device, CL_DEVICE_LOCAL_MEM_SIZE, 2 * sizeof(int), nsize, 0);
 	printf("CL_DEVICE_LOCAL_MEM_SIZE nsize = {%d, %d}\n", nsize[0], nsize[1]);
 	cl_ulong local_mem_size = 0;
-	clGetDeviceInfo(*device, CL_DEVICE_LOCAL_MEM_SIZE, sizeof(cl_ulong), &local_mem_size, NULL);
+	clGetDeviceInfo(device, CL_DEVICE_LOCAL_MEM_SIZE, sizeof(cl_ulong), &local_mem_size, NULL);
 	printf("CL_DEVICE_LOCAL_MEM_SIZE = %llu bytes\n", local_mem_size);
 
-	clGetDeviceInfo(*device, CL_DEVICE_GLOBAL_MEM_SIZE, 0, NULL, &cb);
+	clGetDeviceInfo(device, CL_DEVICE_GLOBAL_MEM_SIZE, 0, NULL, &cb);
 	printf("CL_DEVICE_GLOBAL_MEM_SIZE num = %d\n", cb / sizeof(int));
-	clGetDeviceInfo(*device, CL_DEVICE_GLOBAL_MEM_SIZE, 2 * sizeof(int), nsize, 0);
+	clGetDeviceInfo(device, CL_DEVICE_GLOBAL_MEM_SIZE, 2 * sizeof(int), nsize, 0);
 	printf("CL_DEVICE_GLOBAL_MEM_SIZE nsize = {%d, %d}\n", nsize[0], nsize[1]);
 
-	clGetDeviceInfo(*device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, 0, NULL, &cb);
+	clGetDeviceInfo(device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, 0, NULL, &cb);
 	printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE num = %d\n", cb / sizeof(int));
-	clGetDeviceInfo(*device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, 2 * sizeof(int), nsize, 0);
+	clGetDeviceInfo(device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, 2 * sizeof(int), nsize, 0);
 	printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE nsize = {%d, %d}\n", nsize[0], nsize[1]);
 
-	clGetDeviceInfo(*device, CL_DEVICE_MAX_COMPUTE_UNITS, 0, NULL, &cb);
+	clGetDeviceInfo(device, CL_DEVICE_MAX_COMPUTE_UNITS, 0, NULL, &cb);
 	printf("CL_DEVICE_MAX_COMPUTE_UNITS num = %d\n", cb / sizeof(int));
-	clGetDeviceInfo(*device, CL_DEVICE_MAX_COMPUTE_UNITS, 2 * sizeof(int), nsize, 0);
+	clGetDeviceInfo(device, CL_DEVICE_MAX_COMPUTE_UNITS, 2 * sizeof(int), nsize, 0);
 	printf("CL_DEVICE_MAX_COMPUTE_UNITS nsize = {%d, %d}\n", nsize[0], nsize[1]);
 
-	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_GROUP_SIZE, 0, NULL, &cb);
+	clGetDeviceInfo(device, CL_DEVICE_MAX_WORK_GROUP_SIZE, 0, NULL, &cb);
 	printf("CL_DEVICE_MAX_WORK_GROUP_SIZE num = %d\n", cb / sizeof(int));
-	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_GROUP_SIZE, 2 * sizeof(int), nsize, 0);
+	clGetDeviceInfo(device, CL_DEVICE_MAX_WORK_GROUP_SIZE, 2 * sizeof(int), nsize, 0);
 	printf("CL_DEVICE_MAX_WORK_GROUP_SIZE nsize = {%d, %d}\n", nsize[0], nsize[1]);
 
-	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 0, NULL, &cb);
+	clGetDeviceInfo(device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 0, NULL, &cb);
 	printf("CL_DEVICE_MAX_WORK_ITEM_SIZES num = %d\n", cb / sizeof(int));
-	clGetDeviceInfo(*device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3 * sizeof(int), nsize, 0);
+	clGetDeviceInfo(device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3 * sizeof(int), nsize, 0);
 	printf("CL_DEVICE_MAX_WORK_ITEM_SIZES nsize = {%d, %d, %d}\n", nsize[0], nsize[1], nsize[2]);
 	printf("\n");
 #endif
