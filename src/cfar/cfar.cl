@@ -22,16 +22,23 @@ __kernel void cfar_ca(__global const float *pwr,
 	int base = get_group_id(0) * Isize;
 	int idx = base + lid;
 
-/*	for(int i = 0 ; i < (Isize + 3) / 4 ; i++)
-	{
-		int off = base + i * 4;
-		if(off + 3 < len)
-		{
-			Ibuf[i] = vload4(0, pwr + off);
+	// 每个工作项负责搬运一部分数据
+	int num_float4 = (1000 + 3) / 4; // pwr长度为1000
+	if (lid < num_float4) {
+		int off = base + lid * 4;
+		if (off + 3 < 1000) {
+			Ibuf[lid] = vload4(0, pwr + off);
+		} else {
+			// 边界处理，最后一组可能不足4个float
+			float tmp[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+			for (int j = 0; j < 4; ++j) {
+				if (off + j < 1000) tmp[j] = pwr[off + j];
+			}
+			Ibuf[lid] = (float4)(tmp[0], tmp[1], tmp[2], tmp[3]);
 		}
 	}
 	barrier(CLK_LOCAL_MEM_FENCE);
-*/
+
 
 	float sum_left = 0.0f;
 	float sum_right = 0.0f;

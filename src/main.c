@@ -15,7 +15,7 @@
 #include <cfar.h>
 
 #define MAX_SIZE 1024*1024	//����������ݳ���
-#define TIMES 	1000   // ����ִ�д���
+#define TIMES 	400   // ����ִ�д���
 unsigned int N; 		//�źų���,ͨ����ȡ�ļ�ȷ�����鳤��
 
 void readData(float* data, const char* input_filename)

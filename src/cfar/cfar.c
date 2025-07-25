@@ -155,7 +155,7 @@ void CA_CFAR(float *x,
 			 float *threshold)
 {
 	//����������ں�
-	const size_t lws = 128;
+	const size_t lws = 256;
 	const size_t gws = ((N + lws - 1) / lws) * lws;
 	// ����������
 	cl_mem d_pwr = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(float) * N, NULL, &err);
